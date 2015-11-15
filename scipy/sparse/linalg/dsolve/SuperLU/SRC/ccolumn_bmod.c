@@ -283,7 +283,7 @@ ccolumn_bmod (
     /* Copy the SPA dense into L\U[*,j] */
     new_next = nextlu + xlsub[fsupc+1] - xlsub[fsupc];
     while ( new_next > nzlumax ) {
-	if (mem_error = cLUMemXpand(jcol, nextlu, LUSUP, &nzlumax, Glu))
+	if ((mem_error = cLUMemXpand(jcol, nextlu, LUSUP, &nzlumax, Glu)))
 	    return (mem_error);
 	lusup = Glu->lusup;
 	lsub = Glu->lsub;
