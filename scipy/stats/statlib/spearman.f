@@ -9,7 +9,10 @@ c
 c     Auxiliary function required: ALNORM = algorithm AS66
 c
       implicit none
+      integer i, ifault, ifr, is, ise, js, l
+      integer m, mt, n, n1, nfac, nn
       dimension l(6)
+      double precision alnorm
       double precision zero, one, two, b, x, y, z, u, six,
      $  c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12
       data zero, one, two, six /0.0d0, 1.0d0, 2.0d0, 6.0d0/
