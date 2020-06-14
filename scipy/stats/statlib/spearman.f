@@ -8,6 +8,7 @@ c        must be greater than 1
 c
 c     Auxiliary function required: ALNORM = algorithm AS66
 c
+      implicit none
       dimension l(6)
       double precision zero, one, two, b, x, y, z, u, six,
      $  c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12

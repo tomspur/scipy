@@ -38,6 +38,7 @@
 *   inform  integer intent(out), 
 *               if inform == 0: error < eps
 *               elif inform == 1: error > eps, all maxpts used
+      implicit none
       integer n, d, infin(d), maxpts, inform, tmpinf
       double precision lower(d), upper(d), releps, abseps,
      &                 error, value, stdev(d), rho(d*(d-1)/2), 
@@ -107,6 +108,7 @@
 *   inform  integer intent(out), 
 *               if inform == 0: error < eps
 *               elif inform == 1: error > eps, all maxpts used
+      implicit none
       integer n, d, infin(d), maxpts, inform, tmpinf
       double precision lower(d), upper(d), releps, abseps,
      &                 error, value, stdev(d), rho(d*(d-1)/2), 
@@ -196,6 +198,7 @@
 *                           decrease ERROR;
 *            if INFORM = 2, N > 500 or N < 1.
 *
+      IMPLICIT NONE
       EXTERNAL MVNDFN
       INTEGER N, INFIN(*), MAXPTS, INFORM, INFIS, IVLS
       DOUBLE PRECISION CORREL(*), LOWER(*), UPPER(*), RELEPS, ABSEPS,
@@ -328,6 +331,7 @@
 *
 *     Subroutine to sort integration limits and determine Cholesky factor.
 *
+      IMPLICIT NONE
       INTEGER N, INFI(*), INFIN(*), INFIS
       DOUBLE PRECISION 
      &     A(*), B(*), COV(*), LOWER(*), UPPER(*), CORREL(*), Y(*)
@@ -491,6 +495,7 @@
       END
 *
       SUBROUTINE DKSWAP( X, Y )
+      IMPLICIT NONE
       DOUBLE PRECISION X, Y, T
       T = X
       X = Y
@@ -501,6 +506,7 @@
 *
 *     Swaps rows and columns P and Q in situ, with P <= Q.
 *
+      IMPLICIT NONE
       DOUBLE PRECISION A(*), B(*), C(*)
       INTEGER INFIN(*), P, Q, N, I, J, II, JJ
       CALL DKSWAP( A(P), A(Q) )
@@ -584,6 +590,7 @@
 *          accuracy. In this case a value FINEST is returned with 
 *          estimated absolute accuracy ABSERR.
 ************************************************************************
+      IMPLICIT NONE
       EXTERNAL FUNCTN
       INTEGER NDIM, MINVLS, MAXVLS, INFORM, NP, PLIM, NLIM, KLIM, KLIMI,
      &        SAMPLS, I, INTVLS, MINSMP
@@ -823,6 +830,7 @@
 *     
 *     Latest revision - 30 March 1986
 *     
+      IMPLICIT NONE
       DOUBLE PRECISION P0, P1, P2, P3, P4, P5, P6, 
      *     Q0, Q1, Q2, Q3, Q4, Q5, Q6, Q7,
      *     Z, P, EXPNTL, CUTOFF, ROOTPI, ZABS
@@ -999,6 +1007,7 @@
 *            if INFIN(I) = 2, Ith limits are [LOWER(I), UPPER(I)].
 *     CORREL REAL, correlation coefficient.
 *
+      IMPLICIT NONE
       DOUBLE PRECISION LOWER(*), UPPER(*), CORREL, BVU
       INTEGER INFIN(*)
       IF ( INFIN(1) .EQ. 2  .AND. INFIN(2) .EQ. 2 ) THEN
@@ -1053,6 +1062,7 @@
 *   R   REAL, correlation coefficient
 *   LG  INTEGER, number of Gauss Rule Points and Weights
 *
+      IMPLICIT NONE
       DOUBLE PRECISION BVN, SH, SK, R, ZERO, TWOPI 
       INTEGER I, LG, NG
       PARAMETER ( ZERO = 0, TWOPI = 6.283185307179586D0 ) 
@@ -1156,6 +1166,7 @@
 *     Operations Research 44, pp. 816-822.
 *
 *
+      IMPLICIT NONE
       INTEGER A12, A13, A21, A23, P12, P13, P21, P23
       INTEGER Q12, Q13, Q21, Q23, R12, R13, R21, R23
       INTEGER X10, X11, X12, X20, X21, X22, Z, M1, M2, H 
