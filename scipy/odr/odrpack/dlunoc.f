@@ -1,6 +1,7 @@
       subroutine dluno
      +   (lun, fn)
 
+      implicit none
       integer lun
       character*(*) fn
 
@@ -13,6 +14,7 @@
       subroutine dlunc
      +   (lun)
 
+      implicit none
       integer lun
 
       close(unit=lun)
