@@ -216,6 +216,8 @@ C*  Copyright 1991: Dieter Kraft, FHM                                  *
 C*                                                                     *
 C***********************************************************************
 
+      IMPLICIT NONE
+
       INTEGER          il, im, ir, is, iter, iu, iv, iw, ix, l_w, l_jw,
      *                 jw(l_jw), la, m, meq, mineq, mode, n
 
@@ -631,6 +633,8 @@ C               7: RANK DEFECT IN HFTI
 c     coded            Dieter Kraft, april 1987
 c     revised                        march 1989
 
+      IMPLICIT NONE
+
       DOUBLE PRECISION l,g,a,b,w,xl,xu,x,y,
      .                 diag,ZERO,one,ddot_sl,xnorm
 
@@ -840,6 +844,8 @@ C               7: RANK DEFECT IN HFTI
 C     18.5.1981, DIETER KRAFT, DFVLR OBERPFAFFENHOFEN
 C     20.3.1987, DIETER KRAFT, DFVLR OBERPFAFFENHOFEN
 
+      IMPLICIT NONE
+
       INTEGER          jw(*),i,ie,IF,ig,iw,j,k,krank,l,lc,LE,lg,
      .                 mc,mc1,me,mg,mode,n
       DOUBLE PRECISION c(lc,n),e(LE,n),g(lg,n),d(lc),f(LE),h(lg),x(n),
@@ -967,6 +973,8 @@ C               5: MATRIX E IS NOT OF FULL RANK
 C     03.01.1980, DIETER KRAFT: CODED
 C     20.03.1987, DIETER KRAFT: REVISED TO FORTRAN 77
 
+      IMPLICIT NONE
+
       INTEGER          i,j,LE,lg,me,mg,mode,n,jw(lg)
       DOUBLE PRECISION e(LE,n),f(LE),g(lg,n),h(lg),x(n),w(*),
      .                 ddot_sl,xnorm,dnrm2_,epmach,t,one
@@ -1042,6 +1050,8 @@ C          MODE=1: SUCCESSFUL COMPUTATION
 C               2: ERROR RETURN BECAUSE OF WRONG DIMENSIONS (N.LE.0)
 C               3: ITERATION COUNT EXCEEDED BY NNLS
 C               4: INEQUALITY CONSTRAINTS INCOMPATIBLE
+
+      IMPLICIT NONE
 
       DOUBLE PRECISION g,h,x,xnorm,w,u,v,
      .                 ZERO,one,fac,rnorm,dnrm2_,ddot_sl,diff
@@ -1148,6 +1158,8 @@ C            1    THE SOLUTION HAS BEEN COMPUTED SUCCESSFULLY.
 C            2    THE DIMENSIONS OF THE PROBLEM ARE WRONG,
 C                 EITHER M <= 0 OR N <= 0.
 C            3    ITERATION COUNT EXCEEDED, MORE THAN 3*N ITERATIONS.
+
+      IMPLICIT NONE
 
       INTEGER          i,ii,ip,iter,itmax,iz,izmax,iz1,iz2,j,jj,jz,
      *                 k,l,m,mda,mode,n,npp1,nsetp,INDEX(n)
@@ -1332,6 +1344,8 @@ C     H(), G()         ARRAYS OF WORKING SPACE OF LENGTH >= N.
 C     IP()             INTEGER ARRAY OF WORKING SPACE OF LENGTH >= N
 C                      RECORDING PERMUTATION INDICES OF COLUMN VECTORS
 
+      IMPLICIT NONE
+
       INTEGER          i,j,jb,k,kp1,krank,l,ldiag,lmax,m,
      .                 mda,mdb,n,nb,ip(n)
       DOUBLE PRECISION a(mda,n),b(mdb,nb),h(n),g(n),rnorm(nb),factor,
@@ -1459,6 +1473,8 @@ C     ICV    STORAGE INCREMENT BETWEEN VECTORS IN C().
 C     NCV    NUMBER OF VECTORS IN C() TO BE TRANSFORMED.
 C            IF NCV <= 0 NO OPERATIONS WILL BE DONE ON C().
 
+      IMPLICIT NONE
+
       INTEGER          incr, ice, icv, iue, lpivot, l1, mode, ncv
       INTEGER          i, i2, i3, i4, j, m
       DOUBLE PRECISION u,up,c,cl,clinv,b,sm,one,ZERO
@@ -1544,6 +1560,8 @@ C               D-8031  OBERPFAFFENHOFEN
 C   STATUS: 15. JANUARY 1980
 
 C   SUBROUTINES REQUIRED: NONE
+
+      IMPLICIT NONE
 
       INTEGER          i, ij, j, n
       DOUBLE PRECISION a(*), t, v, w(*), z(*), u, tp, one, beta, four,
@@ -1645,6 +1663,8 @@ C                D-8031  OBERPFAFFENHOFEN
 C   STATUS: 31. AUGUST  1984
 
 C   SUBROUTINES REQUIRED: NONE
+
+      IMPLICIT NONE
 
       INTEGER          mode
       DOUBLE PRECISION f, tol, a, b, c, d, e, p, q, r, u, v, w, x, m,
@@ -1771,6 +1791,8 @@ C     CONSTANT TIMES A VECTOR PLUS A VECTOR.
 C     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
 C     JACK DONGARRA, LINPACK, 3/11/78.
 
+      IMPLICIT NONE
+
       DOUBLE PRECISION dx(*),dy(*),da
       INTEGER i,incx,incy,ix,iy,m,mp1,n
 
@@ -1817,6 +1839,8 @@ C        CLEAN-UP LOOP
 C     COPIES A VECTOR, X, TO A VECTOR, Y.
 C     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
 C     JACK DONGARRA, LINPACK, 3/11/78.
+
+      IMPLICIT NONE
 
       DOUBLE PRECISION dx(*),dy(*)
       INTEGER i,incx,incy,ix,iy,m,mp1,n
@@ -1867,6 +1891,8 @@ C     FORMS THE DOT PRODUCT OF TWO VECTORS.
 C     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
 C     JACK DONGARRA, LINPACK, 3/11/78.
 
+      IMPLICIT NONE
+
       DOUBLE PRECISION dx(*),dy(*),dtemp
       INTEGER i,incx,incy,ix,iy,m,mp1,n
 
@@ -1910,6 +1936,7 @@ C        CLEAN-UP LOOP
       END
 
       DOUBLE PRECISION FUNCTION dnrm1(n,x,i,j)
+      IMPLICIT NONE
       INTEGER n, i, j, k
       DOUBLE PRECISION snormx, sum, x(n), ZERO, one, scale, temp
       DATA ZERO/0.0d0/, one/1.0d0/
@@ -1945,6 +1972,7 @@ C      DNRM1   NORM
       END
 
       DOUBLE PRECISION FUNCTION dnrm2_ ( n, dx, incx)
+      IMPLICIT NONE
       INTEGER          n, i, j, nn, next, incx
       DOUBLE PRECISION dx(*), cutlo, cuthi, hitest, sum, xmax, ZERO, one
       DATA             ZERO, one /0.0d0, 1.0d0/
@@ -2071,6 +2099,8 @@ C              COMPUTE SQUARE ROOT AND ADJUST FOR SCALING.
 C     APPLIES A PLANE ROTATION.
 C     JACK DONGARRA, LINPACK, 3/11/78.
 
+      IMPLICIT NONE
+
       DOUBLE PRECISION dx(*),dy(*),dtemp,c,s
       INTEGER i,incx,incy,ix,iy,n
 
@@ -2109,6 +2139,8 @@ C     CONSTRUCT GIVENS PLANE ROTATION.
 C     JACK DONGARRA, LINPACK, 3/11/78.
 C                    MODIFIED 9/27/86.
 
+      IMPLICIT NONE
+
       DOUBLE PRECISION da,db,c,s,roe,scale,r,z,one,ZERO
       DATA one, ZERO /1.0d+00, 0.0d+00/
 
@@ -2136,6 +2168,8 @@ C                    MODIFIED 9/27/86.
 C     SCALES A VECTOR BY A CONSTANT.
 C     USES UNROLLED LOOPS FOR INCREMENT EQUAL TO ONE.
 C     JACK DONGARRA, LINPACK, 3/11/78.
+
+      IMPLICIT NONE
 
       DOUBLE PRECISION da,dx(*)
       INTEGER i,incx,m,mp1,n,nincx
@@ -2174,6 +2208,7 @@ C        CLEAN-UP LOOP
       END
 
       subroutine bound(n, x, xl, xu)
+      implicit none
       integer n, i
       double precision x(n), xl(n), xu(n)
       do i = 1, n
