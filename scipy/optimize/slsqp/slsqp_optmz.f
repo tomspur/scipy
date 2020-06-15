@@ -863,34 +863,38 @@ C     20.3.1987, DIETER KRAFT, DFVLR OBERPFAFFENHOFEN
 
 C  TRIANGULARIZE C AND APPLY FACTORS TO E AND G
 
-      DO 10 i=1,mc
+      DO i=1,mc
           j=MIN(i+1,lc)
           CALL h12(1,i,i+1,n,c(i,1),lc,w(iw+i),c(j,1),lc,1,mc-i)
           CALL h12(2,i,i+1,n,c(i,1),lc,w(iw+i),e     ,LE,1,me)
-   10     CALL h12(2,i,i+1,n,c(i,1),lc,w(iw+i),g     ,lg,1,mg)
+          CALL h12(2,i,i+1,n,c(i,1),lc,w(iw+i),g     ,lg,1,mg)
+      END DO
 
 C  SOLVE C*X=D AND MODIFY F
 
       mode=6
-      DO 15 i=1,mc
+      DO i=1,mc
           IF(ABS(c(i,i)).LT.epmach)    GOTO 75
           x(i)=(d(i)-ddot_sl(i-1,c(i,1),lc,x,1))/c(i,i)
-   15 CONTINUE
+      END DO
       mode=1
       w(mc1) = ZERO
       CALL dcopy_ (mg-mc,w(mc1),0,w(mc1),1)
 
       IF(mc.EQ.n)                      GOTO 50
 
-      DO 20 i=1,me
-   20     w(IF-1+i)=f(i)-ddot_sl(mc,e(i,1),LE,x,1)
+      DO i=1,me
+          w(IF-1+i)=f(i)-ddot_sl(mc,e(i,1),LE,x,1)
+      END DO
 
 C  STORE TRANSFORMED E & G
 
-      DO 25 i=1,me
-   25     CALL dcopy_(l,e(i,mc1),LE,w(ie-1+i),me)
-      DO 30 i=1,mg
-   30     CALL dcopy_(l,g(i,mc1),lg,w(ig-1+i),mg)
+      DO i=1,me
+          CALL dcopy_(l,e(i,mc1),LE,w(ie-1+i),me)
+      END DO
+      DO i=1,mg
+          CALL dcopy_(l,g(i,mc1),lg,w(ig-1+i),mg)
+      END DO
 
       IF(mg.GT.0)                      GOTO 40
 
@@ -906,8 +910,9 @@ C  SOLVE LS WITHOUT INEQUALITY CONSTRAINTS
                                        GOTO 50
 C  MODIFY H AND SOLVE INEQUALITY CONSTRAINED LS PROBLEM
 
-   40 DO 45 i=1,mg
-   45     h(i)=h(i)-ddot_sl(mc,g(i,1),lg,x,1)
+   40 DO i=1,mg
+          h(i)=h(i)-ddot_sl(mc,g(i,1),lg,x,1)
+      END DO
       CALL lsi
      . (w(ie),w(IF),w(ig),h,me,me,mg,mg,l,x(mc1),xnrm,w(mc1),jw,mode)
       IF(mc.EQ.0)                      GOTO 75
@@ -917,18 +922,21 @@ C  MODIFY H AND SOLVE INEQUALITY CONSTRAINED LS PROBLEM
 
 C  SOLUTION OF ORIGINAL PROBLEM AND LAGRANGE MULTIPLIERS
 
-   50 DO 55 i=1,me
-   55     f(i)=ddot_sl(n,e(i,1),LE,x,1)-f(i)
-      DO 60 i=1,mc
-   60     d(i)=ddot_sl(me,e(1,i),1,f,1)-ddot_sl(mg,g(1,i),1,w(mc1),1)
+   50 DO i=1,me
+          f(i)=ddot_sl(n,e(i,1),LE,x,1)-f(i)
+      END DO
+      DO i=1,mc
+          d(i)=ddot_sl(me,e(1,i),1,f,1)-ddot_sl(mg,g(1,i),1,w(mc1),1)
+      END DO
 
-      DO 65 i=mc,1,-1
-   65     CALL h12(2,i,i+1,n,c(i,1),lc,w(iw+i),x,1,1,1)
+      DO i=mc,1,-1
+          CALL h12(2,i,i+1,n,c(i,1),lc,w(iw+i),x,1,1,1)
+      END DO
 
-      DO 70 i=mc,1,-1
+      DO i=mc,1,-1
           j=MIN(i+1,lc)
           w(i)=(d(i)-ddot_sl(mc-i,c(j,i),1,w(j),1))/c(i,i)
-   70 CONTINUE
+      END DO
 
 C  END OF SUBROUTINE LSEI
 
@@ -982,19 +990,22 @@ C     20.03.1987, DIETER KRAFT: REVISED TO FORTRAN 77
 
 C  QR-FACTORS OF E AND APPLICATION TO F
 
-      DO 10 i=1,n
-      j=MIN(i+1,n)
-      CALL h12(1,i,i+1,me,e(1,i),1,t,e(1,j),1,LE,n-i)
-   10 CALL h12(2,i,i+1,me,e(1,i),1,t,f     ,1,1 ,1  )
+      DO i=1,n
+          j=MIN(i+1,n)
+          CALL h12(1,i,i+1,me,e(1,i),1,t,e(1,j),1,LE,n-i)
+          CALL h12(2,i,i+1,me,e(1,i),1,t,f     ,1,1 ,1  )
+      END DO
 
 C  TRANSFORM G AND H TO GET LEAST DISTANCE PROBLEM
 
       mode=5
-      DO 30 i=1,mg
-          DO 20 j=1,n
+      DO i=1,mg
+          DO j=1,n
               IF (.NOT.(ABS(e(j,j)).GE.epmach)) GOTO 50
-   20         g(i,j)=(g(i,j)-ddot_sl(j-1,g(i,1),lg,e(1,j),1))/e(j,j)
-   30     h(i)=h(i)-ddot_sl(n,g(i,1),lg,f,1)
+              g(i,j)=(g(i,j)-ddot_sl(j-1,g(i,1),lg,e(1,j),1))/e(j,j)
+          END DO
+          h(i)=h(i)-ddot_sl(n,g(i,1),lg,f,1)
+      END DO
 
 C  SOLVE LEAST DISTANCE PROBLEM
 
@@ -1071,16 +1082,19 @@ C  STATE DUAL PROBLEM
       xnorm=ZERO
       IF(m.EQ.0)                    GOTO 50
       iw=0
-      DO 20 j=1,m
-          DO 10 i=1,n
+      DO j=1,m
+          DO i=1,n
               iw=iw+1
-   10         w(iw)=g(j,i)
+              w(iw)=g(j,i)
+          END DO
           iw=iw+1
-   20     w(iw)=h(j)
+          w(iw)=h(j)
+      END DO
       IF=iw+1
-      DO 30 i=1,n
+      DO i=1,n
           iw=iw+1
-   30     w(iw)=ZERO
+          w(iw)=ZERO
+      END DO
       w(iw+1)=one
       n1=n+1
       iz=iw+2
@@ -1101,8 +1115,9 @@ C  COMPUTE SOLUTION OF PRIMAL PROBLEM
       IF(.NOT.(diff(one+fac,one).GT.ZERO)) GOTO 50
       mode=1
       fac=one/fac
-      DO 40 j=1,n
-   40     x(j)=fac*ddot_sl(m,g(1,j),1,w(iy),1)
+      DO j=1,n
+          x(j)=fac*ddot_sl(m,g(1,j),1,w(iy),1)
+      END DO
       xnorm=dnrm2_(n,x,1)
 
 C  COMPUTE LAGRANGE MULTIPLIERS FOR PRIMAL PROBLEM
@@ -1182,8 +1197,9 @@ c     revised          Dieter Kraft, March 1983
 
 C STEP ONE (INITIALIZE)
 
-      DO 100 i=1,n
-  100    INDEX(i)=i
+      DO i=1,n
+         INDEX(i)=i
+      END DO
       iz1=1
       iz2=n
       nsetp=0
@@ -1195,19 +1211,20 @@ C STEP TWO (COMPUTE DUAL VARIABLES)
 C .....ENTRY LOOP A
 
   110 IF(iz1.GT.iz2.OR.nsetp.GE.m)    GOTO 280
-      DO 120 iz=iz1,iz2
+      DO iz=iz1,iz2
          j=INDEX(iz)
-  120    w(j)=ddot_sl(m-nsetp,a(npp1,j),1,b(npp1),1)
+         w(j)=ddot_sl(m-nsetp,a(npp1,j),1,b(npp1),1)
+      END DO
 
 C STEP THREE (TEST DUAL VARIABLES)
 
   130 wmax=ZERO
-      DO 140 iz=iz1,iz2
+      DO iz=iz1,iz2
       j=INDEX(iz)
-         IF(w(j).LE.wmax)             GOTO 140
+         IF(w(j).LE.wmax)             EXIT
          wmax=w(j)
          izmax=iz
-  140 CONTINUE
+      END DO
 
 C .....EXIT LOOP A
 
@@ -1236,9 +1253,10 @@ C STEP FIVE (ADD COLUMN)
       iz1=iz1+1
       nsetp=npp1
       npp1=npp1+1
-      DO 170 jz=iz1,iz2
+      DO jz=iz1,iz2
          jj=INDEX(jz)
-  170    CALL h12(2,nsetp,npp1,m,a(1,j),1,up,a(1,jj),1,mda,1)
+         CALL h12(2,nsetp,npp1,m,a(1,j),1,up,a(1,jj),1,mda,1)
+      END DO
       k=MIN(npp1,mda)
       w(j)=ZERO
       CALL dcopy_(m-nsetp,w(j),0,a(k,j),1)
@@ -1246,11 +1264,12 @@ C STEP FIVE (ADD COLUMN)
 C STEP SIX (SOLVE LEAST SQUARES SUB-PROBLEM)
 C .....ENTRY LOOP B
 
-  180 DO 200 ip=nsetp,1,-1
+  180 DO ip=nsetp,1,-1
          IF(ip.EQ.nsetp)              GOTO 190
          CALL daxpy_sl(ip,-z(ip+1),a(1,jj),1,z,1)
   190    jj=INDEX(ip)
-  200    z(ip)=z(ip)/a(ip,jj)
+         z(ip)=z(ip)/a(ip,jj)
+      END DO
       iter=iter+1
       IF(iter.LE.itmax)               GOTO 220
   210 mode=3
@@ -1259,17 +1278,18 @@ C STEP SEVEN TO TEN (STEP LENGTH ALGORITHM)
 
   220 alpha=one
       jj=0
-      DO 230 ip=1,nsetp
-         IF(z(ip).GT.ZERO)            GOTO 230
+      DO ip=1,nsetp
+         IF(z(ip).GT.ZERO)            EXIT
          l=INDEX(ip)
          t=-x(l)/(z(ip)-x(l))
-         IF(alpha.LT.t)               GOTO 230
+         IF(alpha.LT.t)               EXIT
          alpha=t
          jj=ip
-  230 CONTINUE
-      DO 240 ip=1,nsetp
+      END DO
+      DO ip=1,nsetp
          l=INDEX(ip)
-  240    x(l)=(one-alpha)*x(l) + alpha*z(ip)
+         x(l)=(one-alpha)*x(l) + alpha*z(ip)
+      END DO
 
 C .....EXIT LOOP B
 
@@ -1280,7 +1300,7 @@ C STEP ELEVEN (DELETE COLUMN)
       i=INDEX(jj)
   250 x(i)=ZERO
       jj=jj+1
-      DO 260 j=jj,nsetp
+      DO j=jj,nsetp
          ii=INDEX(j)
          INDEX(j-1)=ii
          CALL dsrotg(a(j-1,ii),a(j,ii),c,s)
@@ -1288,16 +1308,17 @@ C STEP ELEVEN (DELETE COLUMN)
          CALL dsrot(n,a(j-1,1),mda,a(j,1),mda,c,s)
          a(j-1,ii)=t
          a(j,ii)=ZERO
-  260    CALL dsrot(1,b(j-1),1,b(j),1,c,s)
+         CALL dsrot(1,b(j-1),1,b(j),1,c,s)
+      END DO
       npp1=nsetp
       nsetp=nsetp-1
       iz1=iz1-1
       INDEX(iz1)=i
       IF(nsetp.LE.0)                  GOTO 210
-      DO 270 jj=1,nsetp
+      DO jj=1,nsetp
          i=INDEX(jj)
          IF(x(i).LE.ZERO)             GOTO 250
-  270 CONTINUE
+      END DO
       CALL dcopy_(m,b,1,z,1)
                                       GOTO 180
 C STEP TWELVE (SOLUTION)
@@ -1359,42 +1380,48 @@ C                      RECORDING PERMUTATION INDICES OF COLUMN VECTORS
 
 C   COMPUTE LMAX
 
-      DO 80 j=1,ldiag
+      DO j=1,ldiag
           IF(j.EQ.1)                  GOTO 20
           lmax=j
-          DO 10 l=j,n
+          DO l=j,n
               h(l)=h(l)-a(j-1,l)**2
-   10         IF(h(l).GT.h(lmax)) lmax=l
+              IF(h(l).GT.h(lmax)) lmax=l
+          END DO
           IF(diff(hmax+factor*h(lmax),hmax).GT.ZERO)
      .                                GOTO 50
    20     lmax=j
-          DO 40 l=j,n
+          DO l=j,n
               h(l)=ZERO
-              DO 30 i=j,m
-   30             h(l)=h(l)+a(i,l)**2
-   40         IF(h(l).GT.h(lmax)) lmax=l
+              DO i=j,m
+                  h(l)=h(l)+a(i,l)**2
+              END DO
+              IF(h(l).GT.h(lmax)) lmax=l
+          END DO
           hmax=h(lmax)
 
 C   COLUMN INTERCHANGES IF NEEDED
 
    50     ip(j)=lmax
           IF(ip(j).EQ.j)              GOTO 70
-          DO 60 i=1,m
+          DO i=1,m
               tmp=a(i,j)
               a(i,j)=a(i,lmax)
-   60         a(i,lmax)=tmp
+              a(i,lmax)=tmp
+          END DO
           h(lmax)=h(j)
 
 C   J-TH TRANSFORMATION AND APPLICATION TO A AND B
 
    70     i=MIN(j+1,n)
           CALL h12(1,j,j+1,m,a(1,j),1,h(j),a(1,i),1,mda,n-j)
-   80     CALL h12(2,j,j+1,m,a(1,j),1,h(j),b,1,mdb,nb)
+          CALL h12(2,j,j+1,m,a(1,j),1,h(j),b,1,mdb,nb)
+      END DO
 
 C   DETERMINE PSEUDORANK
 
-      DO 90 j=1,ldiag
-   90     IF(ABS(a(j,j)).LE.tau)      GOTO 100
+      DO j=1,ldiag
+          IF(ABS(a(j,j)).LE.tau)      GOTO 100
+      END DO
       k=ldiag
       GOTO 110
   100 k=j-1
@@ -1402,34 +1429,35 @@ C   DETERMINE PSEUDORANK
 
 C   NORM OF RESIDUALS
 
-      DO 130 jb=1,nb
-  130     rnorm(jb)=dnrm2_(m-k,b(kp1,jb),1)
+      DO jb=1,nb
+          rnorm(jb)=dnrm2_(m-k,b(kp1,jb),1)
+      END DO
       IF(k.GT.0)                      GOTO 160
-      DO 150 jb=1,nb
-          DO 150 i=1,n
-  150         b(i,jb)=ZERO
+      b(1:n,1:nb)=ZERO
       GOTO 270
   160 IF(k.EQ.n)                      GOTO 180
 
 C   HOUSEHOLDER DECOMPOSITION OF FIRST K ROWS
 
-      DO 170 i=k,1,-1
-  170     CALL h12(1,i,kp1,n,a(i,1),mda,g(i),a,mda,1,i-1)
+      DO i=k,1,-1
+          CALL h12(1,i,kp1,n,a(i,1),mda,g(i),a,mda,1,i-1)
+      END DO
   180 DO 250 jb=1,nb
 
 C   SOLVE K*K TRIANGULAR SYSTEM
 
-          DO 210 i=k,1,-1
+          DO i=k,1,-1
               j=MIN(i+1,n)
-  210         b(i,jb)=(b(i,jb)-ddot_sl(k-i,a(i,j),mda,b(j,jb),1))/a(i,i)
+              b(i,jb)=(b(i,jb)-ddot_sl(k-i,a(i,j),mda,b(j,jb),1))/a(i,i)
+          END DO
 
 C   COMPLETE SOLUTION VECTOR
 
           IF(k.EQ.n)                  GOTO 240
-          DO 220 j=kp1,n
-  220         b(j,jb)=ZERO
-          DO 230 i=1,k
-  230         CALL h12(2,i,kp1,n,a(i,1),mda,g(i),b(1,jb),1,mdb,1)
+          b(kp1:n,jb)=ZERO
+          DO i=1,k
+              CALL h12(2,i,kp1,n,a(i,1),mda,g(i),b(1,jb),1,mdb,1)
+          END DO
 
 C   REORDER SOLUTION ACCORDING TO PREVIOUS COLUMN INTERCHANGES
 
@@ -1487,14 +1515,16 @@ C            IF NCV <= 0 NO OPERATIONS WILL BE DONE ON C().
 
 C     ****** CONSTRUCT THE TRANSFORMATION ******
 
-          DO 10 j=l1,m
-             sm=ABS(u(1,j))
-   10     cl=MAX(sm,cl)
+      DO j=l1,m
+         sm=ABS(u(1,j))
+         cl=MAX(sm,cl)
+      END DO
       IF (cl.LE.ZERO)                             GOTO 80
       clinv=one/cl
       sm=(u(1,lpivot)*clinv)**2
-          DO 20 j=l1,m
-   20     sm=sm+(u(1,j)*clinv)**2
+          DO j=l1,m
+              sm=sm+(u(1,j)*clinv)**2
+          END DO
       cl=cl*SQRT(sm)
       IF (u(1,lpivot).GT.ZERO) cl=-cl
       up=u(1,lpivot)-cl
@@ -1509,20 +1539,22 @@ C     ****** APPLY THE TRANSFORMATION  I+U*(U**T)/B  TO C ******
       b=one/b
       i2=1-icv+ice*(lpivot-1)
       incr=ice*(l1-lpivot)
-          DO 70 j=1,ncv
+      DO 70 j=1,ncv
           i2=i2+icv
           i3=i2+incr
           i4=i3
           sm=c(i2)*up
-              DO 50 i=l1,m
+          DO i=l1,m
               sm=sm+c(i3)*u(1,i)
-   50         i3=i3+ice
+              i3=i3+ice
+          END DO
           IF (sm.EQ.ZERO)                         GOTO 70
           sm=sm*b
           c(i2)=c(i2)+sm*up
-              DO 60 i=l1,m
+          DO i=l1,m
               c(i4)=c(i4)+sm*u(1,i)
-   60         i4=i4+ice
+              i4=i4+ice
+          END DO
    70     CONTINUE
    80                                             END
 
@@ -1573,25 +1605,27 @@ C   SUBROUTINES REQUIRED: NONE
       t=one/sigma
       IF(sigma.GT.ZERO)               GOTO 220
 C PREPARE NEGATIVE UPDATE
-      DO 150 i=1,n
-  150     w(i)=z(i)
-      DO 170 i=1,n
+      w(1:n)=z(1:n)
+      DO i=1,n
           v=w(i)
           t=t+v*v/a(ij)
-          DO 160 j=i+1,n
+          DO j=i+1,n
               ij=ij+1
-  160         w(j)=w(j)-v*a(ij)
-  170     ij=ij+1
+              w(j)=w(j)-v*a(ij)
+          END DO
+          ij=ij+1
+      END DO
       IF(t.GE.ZERO) t=epmach/sigma
-      DO 210 i=1,n
+      DO i=1,n
           j=n+1-i
           ij=ij-i
           u=w(j)
           w(j)=t
-  210     t=t-u*u/a(ij)
+          t=t-u*u/a(ij)
+      END DO
   220 CONTINUE
 C HERE UPDATING BEGINS
-      DO 270 i=1,n
+      DO i=1,n
           v=z(i)
           delta=v/a(ij)
           IF(sigma.LT.ZERO) tp=w(i)
@@ -1601,19 +1635,22 @@ C HERE UPDATING BEGINS
           IF(i.EQ.n)                  GOTO 280
           beta=delta/tp
           IF(alpha.GT.four)           GOTO 240
-          DO 230 j=i+1,n
+          DO j=i+1,n
               ij=ij+1
               z(j)=z(j)-v*a(ij)
-  230         a(ij)=a(ij)+beta*z(j)
+              a(ij)=a(ij)+beta*z(j)
+          END DO
                                       GOTO 260
   240     gamma=t/tp
-          DO 250 j=i+1,n
+          DO j=i+1,n
               ij=ij+1
               u=a(ij)
               a(ij)=gamma*u+beta*z(j)
-  250         z(j)=z(j)-v*u
+              z(j)=z(j)-v*u
+          END DO
   260     ij=ij+1
-  270     t=tp
+          t=tp
+      END DO
   280 RETURN
 C END OF LDL
       END
@@ -1807,11 +1844,11 @@ C        NOT EQUAL TO 1
       iy = 1
       IF(incx.LT.0)ix = (-n+1)*incx + 1
       IF(incy.LT.0)iy = (-n+1)*incy + 1
-      DO 10 i = 1,n
+      DO i = 1,n
         dy(iy) = dy(iy) + da*dx(ix)
         ix = ix + incx
         iy = iy + incy
-   10 CONTINUE
+      END DO
       RETURN
 
 C        CODE FOR BOTH INCREMENTS EQUAL TO 1
@@ -1820,17 +1857,17 @@ C        CLEAN-UP LOOP
 
    20 m = MOD(n,4)
       IF( m .EQ. 0 ) GO TO 40
-      DO 30 i = 1,m
+      DO i = 1,m
         dy(i) = dy(i) + da*dx(i)
-   30 CONTINUE
+      END DO
       IF( n .LT. 4 ) RETURN
    40 mp1 = m + 1
-      DO 50 i = mp1,n,4
+      DO i = mp1,n,4
         dy(i) = dy(i) + da*dx(i)
         dy(i + 1) = dy(i + 1) + da*dx(i + 1)
         dy(i + 2) = dy(i + 2) + da*dx(i + 2)
         dy(i + 3) = dy(i + 3) + da*dx(i + 3)
-   50 CONTINUE
+      END DO
       RETURN
       END
 
@@ -1954,18 +1991,19 @@ C      OUTPUT -
 C      DNRM1   NORM
 
       snormx=ZERO
-      DO 10 k=i,j
- 10      snormx=MAX(snormx,ABS(x(k)))
+      DO k=i,j
+         snormx=MAX(snormx,ABS(x(k)))
+      END DO
       dnrm1 = snormx
       IF (snormx.EQ.ZERO) RETURN
       scale = snormx
       IF (snormx.GE.one) scale=SQRT(snormx)
       sum=ZERO
-      DO 20 k=i,j
+      DO k=i,j
          temp=ZERO
          IF (ABS(x(k))+scale .NE. scale) temp = x(k)/snormx
          IF (one+temp.NE.one) sum = sum+temp*temp
- 20      CONTINUE
+      END DO
       sum=SQRT(sum)
       dnrm1=snormx*sum
       RETURN
@@ -2075,9 +2113,10 @@ C     FOR COMPLEX      SET HITEST = CUTHI/(2*N)
 
 C                   PHASE 3.  SUM IS MID-RANGE.  NO SCALING.
 
-      DO 95 j =i,nn,incx
+      DO j =i,nn,incx
       IF(ABS(dx(j)) .GE. hitest) GO TO 100
-   95    sum = sum + dx(j)**2
+         sum = sum + dx(j)**2
+      END DO
       dnrm2_ = SQRT( sum )
       GO TO 300
 
@@ -2114,22 +2153,22 @@ C         TO 1
       iy = 1
       IF(incx.LT.0)ix = (-n+1)*incx + 1
       IF(incy.LT.0)iy = (-n+1)*incy + 1
-      DO 10 i = 1,n
+      DO i = 1,n
         dtemp = c*dx(ix) + s*dy(iy)
         dy(iy) = c*dy(iy) - s*dx(ix)
         dx(ix) = dtemp
         ix = ix + incx
         iy = iy + incy
-   10 CONTINUE
+      END DO
       RETURN
 
 C       CODE FOR BOTH INCREMENTS EQUAL TO 1
 
-   20 DO 30 i = 1,n
+   20 DO i = 1,n
         dtemp = c*dx(i) + s*dy(i)
         dy(i) = c*dy(i) - s*dx(i)
         dx(i) = dtemp
-   30 CONTINUE
+      END DO
       RETURN
       END
 
@@ -2181,9 +2220,9 @@ C     JACK DONGARRA, LINPACK, 3/11/78.
 C        CODE FOR INCREMENT NOT EQUAL TO 1
 
       nincx = n*incx
-      DO 10 i = 1,nincx,incx
+      DO i = 1,nincx,incx
         dx(i) = da*dx(i)
-   10 CONTINUE
+      END DO
       RETURN
 
 C        CODE FOR INCREMENT EQUAL TO 1
@@ -2192,18 +2231,18 @@ C        CLEAN-UP LOOP
 
    20 m = MOD(n,5)
       IF( m .EQ. 0 ) GO TO 40
-      DO 30 i = 1,m
+      DO i = 1,m
         dx(i) = da*dx(i)
-   30 CONTINUE
+      END DO
       IF( n .LT. 5 ) RETURN
    40 mp1 = m + 1
-      DO 50 i = mp1,n,5
+      DO i = mp1,n,5
         dx(i) = da*dx(i)
         dx(i + 1) = da*dx(i + 1)
         dx(i + 2) = da*dx(i + 2)
         dx(i + 3) = da*dx(i + 3)
         dx(i + 4) = da*dx(i + 4)
-   50 CONTINUE
+      END DO
       RETURN
       END
 
